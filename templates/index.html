@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WikiFood</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/bootstrap.min.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='shuffle-for-bootstrap.png') }}">
+    <style>
+        #foodpic {
+          border: 2px dashed #007bff;
+          max-width: 654px;
+          max-height: 654px;
+          width: auto;
+          height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+      <section class="pt-5">
+        <div class="container text-center">
+          <h1 class="display-4">WikiFood</h1>
+        </div>
+      </section>
+      <h3 class="text-center">Upload the picture of the food, we will tell you its name!</h3>
+      <section class="py-5">
+        <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
+          <div class="container text-center">
+            <img class="img-fluid my-4" id="foodpic" src= {% if img_src %}"{{img_src}}"{% else %} "https://shuffle.dev/placeholder/pictures/bg_16-9.svg?primary=007bff" {%endif%} alt="">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" name="file" id="fileInput" accept="image/*">
+              <label class="custom-file-label" for="fileInput">Choose file</label>
+            </div>
+            <button class="btn btn-primary mt-3" type="submit">Predict food</button>
+          </div>
+        </form>
+      </section>
+      <h1 class="text-center" id="result">{% if result %}{{ result }} 😋{% endif %}</h1>
+      <h3 class="text-center" id="result">{% if confidence %}confidence: {{ confidence }} %{% endif %}</h3>
+      <section class="py-5">
+        <div class="container text-center">
+          <h4 class="mb-3">Follow me on my Social:</h4>
+          <div class="mx-auto">
+            <a href="https://twitter.com/home">
+              <img class="mr-3" src="{{ url_for('static', filename='placeholder/icons/twitter.svg') }}" alt="">
+            </a>
+            <a href="https://www.linkedin.com/in/wenslous-otema-4848521b4/">
+              <img src="{{ url_for('static', filename='placeholder/icons/linkedin-in.svg') }}" alt="">
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function (e) {
+        (function () {   
+          let foodImage = document.getElementById('foodpic');
+          const fileInput = document.getElementById('fileInput');
+      
+          if (fileInput && foodImage) {
+            const resetImage = foodImage.src;
+            fileInput.addEventListener('change', () => {
+              if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                  foodImage.src = e.target.result;
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+              }
+            });
+            // Add event listener for drag and drop
+            foodImage.addEventListener('dragover', function(e) {
+              e.preventDefault();
+              this.style.border = '2px solid #007bff';
+            });
+            foodImage.addEventListener('dragleave', function(e) {
+              e.preventDefault();
+              this.style.border = '2px dashed #007bff';
+            });
+            foodImage.addEventListener('drop', function(e) {
+              e.preventDefault();
+              this.style.border = '2px dashed #007bff';
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                foodImage.src = e.target.result;
+              }
+              reader.readAsDataURL(e.dataTransfer.files[0]);
+            });
+          }
+        })();
+      });
+    </script>
+</body>
+</html>
